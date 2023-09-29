@@ -1,0 +1,1 @@
+# gorattle-ssl-checker
