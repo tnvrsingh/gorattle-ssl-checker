@@ -2,7 +2,6 @@ import ssl
 import socket
 import datetime
 from dotenv import load_dotenv
-
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
