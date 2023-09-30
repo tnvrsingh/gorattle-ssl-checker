@@ -1,6 +1,10 @@
 import ssl
 import socket
 import datetime
+from dotenv import load_dotenv
+
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 domain_ports = [
     ("expired.badssl.com", 443),
@@ -26,8 +30,15 @@ def check_ssl_cert_expiry(domain, port):
         print(f"Error checking SSL certificate for {domain}: {e}")
         pass
     
-    
-# def send_slack_alert():
+# Function to send Slack alert
+def send_slack_alert(domain, days_left):
+    try:
+        client = WebClient(token=slack_token)
+        message = f"The SSL certificate for {domain} will expire in {days_left} days."
+        response = client.chat_postMessage(channel=slack_channel, text=message)
+        print(f"Slack alert sent for {domain}: {response['ts']}")
+    except SlackApiError as e:
+        print(f"Error sending Slack alert for {domain}: {e.response['error']}")    
     
 for domain, port in domain_ports:
     days_left = check_ssl_cert_expiry(domain, port)
