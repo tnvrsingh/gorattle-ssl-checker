@@ -1,3 +1,4 @@
+import os
 import ssl
 import socket
 import datetime
@@ -9,18 +10,19 @@ domain_ports = [
     ("expired.badssl.com", 443),
     ("gorattle.com", 443),
 ]
+
+load_dotenv()
+
+slack_token = os.getenv("slack_token")
+slack_channel = os.getenv("slack_channel")
  
 def check_ssl_cert_expiry(domain, port):
     try:
         context = ssl.create_default_context()
         with socket.create_connection((domain, port)) as sock:
-            print(sock)
             with context.wrap_socket(sock, server_hostname=domain) as sslsock:
-                print(sslsock)
                 cert = sslsock.getpeercert()
-                print(cert)
                 not_after_str = cert['notAfter']
-                print(not_after_str)
                 not_after = datetime.datetime.strptime(not_after_str, "%b %d %H:%M:%S %Y %Z")
                 days_left = (not_after - datetime.datetime.now()).days
                 print(f"Days left for domain {domain}: {days_left}")
